@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="relative min-h-screen md:flex">
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex justify-between items-center bg-white p-4 shadow-md">
+            <h1 class="text-2xl font-bold text-gray-900">SupplyChain Hub</h1>
+            <button id="mobile-menu-button" class="text-gray-500 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <div id="sidebar" class="sidebar absolute inset-y-0 left-0 z-30 w-64 bg-white shadow-md flex-shrink-0 md:static md:transform-none">
+            <div class="p-6 hidden md:block">
+                <h1 class="text-2xl font-bold text-gray-900">SupplyChain Hub</h1>
+            </div>
+            <nav class="mt-6">
+                <a id="nav-dashboard" href="#" class="nav-link flex items-center px-6 py-3 text-gray-700 bg-gray-200">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span class="mx-3">Dashboard</span>
+                </a>
+                <a id="nav-suppliers" href="#" class="nav-link flex items-center px-6 py-3 text-gray-500 hover:bg-gray-200">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span class="mx-3">Suppliers</span>
+                </a>
+                <a id="nav-inventory" href="#" class="nav-link flex items-center px-6 py-3 text-gray-500 hover:bg-gray-200">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h4M8 7a2 2 0 012-2h4a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-2a2 2 0 01-2-2V9a2 2 0 012-2h2z"></path></svg>
+                    <span class="mx-3">Inventory</span>
+                </a>
+                <a id="nav-orders" href="#" class="nav-link flex items-center px-6 py-3 text-gray-500 hover:bg-gray-200">
+                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span class="mx-3">Orders</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+                <div class="container mx-auto px-6 py-8">
+                    <!-- Loading Spinner -->
+                    <div id="loading" class="text-center p-8 hidden">
+                        <p class="text-lg font-semibold">Loading Data...</p>
+                    </div>
+
+                    <!-- Main content, hidden until data is loaded -->
+                    <div id="main-content" class="hidden">
+                        <!-- Supplier Dashboard Section -->
+                        <div id="page-dashboard">
+                            <h3 class="text-gray-700 text-3xl font-medium">Supplier Dashboard</h3>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">View Products by Supplier</h4>
+                                <select id="dashboard-supplier-select" class="p-2 border rounded w-full md:w-1/3"></select>
+                            </div>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 id="supplier-products-title" class="text-xl font-semibold mb-4">Products</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full"><thead id="supplier-products-table-head"></thead><tbody id="supplier-products-table-body"></tbody></table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inventory Section -->
+                        <div id="page-inventory" class="hidden">
+                            <h3 class="text-gray-700 text-3xl font-medium">Manage Inventory</h3>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">Add New Item</h4>
+                                <form id="inventory-form"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><input id="item-name" type="text" placeholder="Item Name" class="p-2 border rounded w-full" required><select id="item-supplier-select" class="p-2 border rounded w-full" required></select></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><input id="item-quantity" type="number" placeholder="Quantity" class="p-2 border rounded w-full" required><input id="item-price" type="number" placeholder="Unit Price (₹)" class="p-2 border rounded w-full" step="0.01" required></div><textarea id="item-description" rows="3" placeholder="Product Description" class="p-2 border rounded w-full mb-4"></textarea><button type="submit" class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600">Add Item</button></form>
+                            </div>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">Full Stock List</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full"><thead id="inventory-table-head"></thead><tbody id="inventory-table-body"></tbody></table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Suppliers Section -->
+                        <div id="page-suppliers" class="hidden">
+                             <h3 class="text-gray-700 text-3xl font-medium">Suppliers</h3>
+                             <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">Add New Supplier</h4>
+                                <form id="supplier-form"><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><input id="supplier-name" type="text" placeholder="Supplier Name" class="p-2 border rounded w-full" required><input id="supplier-contact" type="text" placeholder="Contact Person" class="p-2 border rounded w-full" required><input id="supplier-email" type="email" placeholder="Email Address" class="p-2 border rounded w-full" required></div><button type="submit" class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600">Add Supplier</button></form>
+                            </div>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">Supplier List</h4>
+                                <div class="overflow-x-auto">
+                                     <table class="min-w-full"><thead id="supplier-table-head"></thead><tbody id="supplier-table-body"></tbody></table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orders Section -->
+                        <div id="page-orders" class="hidden">
+                            <h3 class="text-gray-700 text-3xl font-medium">Orders Dashboard</h3>
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-white p-6 rounded-lg shadow-lg text-center"><h4 class="text-xl font-semibold text-gray-600">Total Spending</h4><p id="total-spending" class="text-3xl font-bold mt-2">₹0.00</p></div><div class="bg-white p-6 rounded-lg shadow-lg text-center"><h4 class="text-xl font-semibold text-gray-600">Total Orders</h4><p id="total-orders" class="text-3xl font-bold mt-2">0</p></div></div>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">Create New Order</h4>
+                                <form id="order-form"><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"><select id="order-item" class="p-2 border rounded w-full" required></select><select id="order-supplier" class="p-2 border rounded w-full" required></select><input id="order-quantity" type="number" placeholder="Quantity" class="p-2 border rounded w-full" required></div><button type="submit" class="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create Order</button><div id="order-error" class="text-red-500 text-sm mt-2 text-center h-5"></div></form>
+                            </div>
+                            <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                                <h4 class="text-xl font-semibold mb-4">Purchase Orders</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full"><thead id="orders-table-head"></thead><tbody id="orders-table-body"></tbody></table>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Since the HTML is served by Flask, we can use relative paths for API calls.
+        const API_URL = ''; 
+
+        // --- STATE MANAGEMENT ---
+        let inventory = [];
+        let suppliers = [];
+        let orders = [];
+
+        // --- DOM Elements ---
+        const loadingDiv = document.getElementById('loading');
+        const mainContentDiv = document.getElementById('main-content');
+        
+        const inventoryForm = document.getElementById('inventory-form');
+        const inventoryTableBody = document.getElementById('inventory-table-body');
+        const supplierForm = document.getElementById('supplier-form');
+        const supplierTableBody = document.getElementById('supplier-table-body');
+        const orderForm = document.getElementById('order-form');
+        const ordersTableBody = document.getElementById('orders-table-body');
+        const itemSupplierSelect = document.getElementById('item-supplier-select');
+        const orderItemSelect = document.getElementById('order-item');
+        const orderSupplierSelect = document.getElementById('order-supplier');
+        const orderErrorDiv = document.getElementById('order-error');
+        const totalSpendingEl = document.getElementById('total-spending');
+        const totalOrdersEl = document.getElementById('total-orders');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const dashboardSupplierSelect = document.getElementById('dashboard-supplier-select');
+        const supplierProductsTableBody = document.getElementById('supplier-products-table-body');
+        const supplierProductsTitle = document.getElementById('supplier-products-title');
+
+        // --- API FUNCTIONS ---
+        async function apiRequest(endpoint, method = 'GET', body = null) {
+            const config = {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+            };
+            if (body) {
+                config.body = JSON.stringify(body);
+            }
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, config);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Network response was not ok');
+                }
+                // Handle responses that might not have a JSON body (like DELETE)
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return await response.json();
+                } else {
+                    return { success: true }; 
+                }
+            } catch (error) {
+                console.error(`API Error on ${method} ${endpoint}:`, error);
+                alert(`Error: ${error.message}`);
+                throw error;
+            }
+        }
+
+
+        // --- NAVIGATION & RESPONSIVENESS ---
+        mobileMenuButton.addEventListener('click', () => sidebar.classList.toggle('open'));
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('[id^="page-"]');
+        function showPage(pageId) {
+            pages.forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId)?.classList.remove('hidden');
+        }
+        function setActiveLink(activeLink) {
+            navLinks.forEach(link => {
+                link.classList.remove('bg-gray-200', 'text-gray-700');
+                link.classList.add('text-gray-500', 'hover:bg-gray-200');
+            });
+            activeLink.classList.add('bg-gray-200', 'text-gray-700');
+        }
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                showPage('page-' + this.id.split('-')[1]);
+                setActiveLink(this);
+                if (window.innerWidth < 768) sidebar.classList.remove('open');
+            });
+        });
+
+        // --- DELETE LOGIC ---
+        document.body.addEventListener('click', async function(e) {
+            const deleteButton = e.target.closest('.delete-btn');
+            if (deleteButton) {
+                const id = deleteButton.dataset.id;
+                const type = deleteButton.dataset.type;
+                if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                    try {
+                        await apiRequest(`/api/${type}s/${id}`, 'DELETE');
+                        await initializeApp(); // Reload all data from server
+                    } catch (error) {
+                        console.error(`Failed to delete ${type}`, error);
+                    }
+                }
+            }
+        });
+
+        // --- RENDER FUNCTIONS (These now just render the state arrays) ---
+        function renderAll() {
+            renderSuppliers();
+            renderInventory();
+            renderOrders();
+            renderFinancialSummary();
+            updateAllSelects();
+        }
+
+        // --- Supplier Renders ---
+        function renderSuppliers() {
+            supplierTableBody.innerHTML = '';
+            if (suppliers.length === 0) {
+                supplierTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No suppliers added yet.</td></tr>';
+                return;
+            }
+            suppliers.forEach(s => {
+                supplierTableBody.innerHTML += `<tr><td class="px-6 py-4 border-b">${s.name}</td><td class="px-6 py-4 border-b">${s.contact}</td><td class="px-6 py-4 border-b">${s.email}</td><td class="px-6 py-4 border-b"><button class="delete-btn text-red-500 hover:text-red-700" data-id="${s.id}" data-type="supplier"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`;
+            });
+        }
+        
+        // --- Inventory Renders ---
+        function renderInventory() {
+            inventoryTableBody.innerHTML = '';
+             if (inventory.length === 0) {
+                inventoryTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No items added yet.</td></tr>';
+                return;
+            }
+            inventory.forEach(i => {
+                inventoryTableBody.innerHTML += `<tr><td class="px-6 py-4 border-b">${i.name}</td><td class="px-6 py-4 border-b">${i.supplierName || 'N/A'}</td><td class="px-6 py-4 border-b">${i.quantity}</td><td class="px-6 py-4 border-b">₹${i.price.toFixed(2)}</td><td class="px-6 py-4 border-b"><button class="delete-btn text-red-500 hover:text-red-700" data-id="${i.id}" data-type="inventory"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`;
+            });
+        }
+        
+        // --- Order Renders ---
+        function renderOrders() {
+            ordersTableBody.innerHTML = '';
+            if (orders.length === 0) {
+                ordersTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4">No orders placed yet.</td></tr>';
+                return;
+            }
+            orders.forEach(o => {
+                ordersTableBody.innerHTML += `<tr><td class="px-6 py-4 border-b">${o.orderIdString}</td><td class="px-6 py-4 border-b">${o.itemName}</td><td class="px-6 py-4 border-b">${o.supplierName}</td><td class="px-6 py-4 border-b">${o.quantity}</td><td class="px-6 py-4 border-b">₹${o.totalCost.toFixed(2)}</td><td class="px-6 py-4 border-b">${o.status}</td><td class="px-6 py-4 border-b"><button class="delete-btn text-red-500 hover:text-red-700" data-id="${o.id}" data-type="order"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`;
+            });
+        }
+        
+        function renderFinancialSummary() {
+            const totalSpending = orders.reduce((sum, order) => sum + order.totalCost, 0);
+            totalSpendingEl.textContent = `₹${totalSpending.toFixed(2)}`;
+            totalOrdersEl.textContent = orders.length;
+        }
+
+        // --- DROPDOWN AND SELECT UPDATES ---
+        function updateAllSelects() {
+            const supplierOptions = '<option value="">Select a Supplier</option>' + suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            itemSupplierSelect.innerHTML = supplierOptions;
+            orderSupplierSelect.innerHTML = supplierOptions;
+            dashboardSupplierSelect.innerHTML = '<option value="">Select a Supplier to View Products</option>' + suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            
+            const itemOptions = '<option value="">Select an Item</option>' + inventory.map(i => `<option value="${i.id}">${i.name} (In Stock: ${i.quantity})</option>`).join('');
+            orderItemSelect.innerHTML = itemOptions;
+            
+            if(dashboardSupplierSelect.value) dashboardSupplierSelect.dispatchEvent(new Event('change'));
+        }
+
+        dashboardSupplierSelect.addEventListener('change', () => {
+             const selectedSupplierId = parseInt(dashboardSupplierSelect.value, 10);
+            if (!selectedSupplierId) {
+                supplierProductsTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Please select a supplier.</td></tr>';
+                supplierProductsTitle.textContent = 'Products';
+                return;
+            }
+            const supplier = suppliers.find(s => s.id === selectedSupplierId);
+            const products = inventory.filter(item => item.supplierId === selectedSupplierId);
+            supplierProductsTitle.textContent = `Products from ${supplier.name}`;
+            supplierProductsTableBody.innerHTML = '';
+            if (products.length === 0) {
+                 supplierProductsTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No products found for this supplier.</td></tr>';
+                 return;
+            }
+            products.forEach(item => {
+                supplierProductsTableBody.innerHTML += `<tr><td class="px-6 py-4 border-b">${item.name}</td><td class="px-6 py-4 border-b">${item.description}</td><td class="px-6 py-4 border-b">${item.quantity}</td><td class="px-6 py-4 border-b">₹${item.price.toFixed(2)}</td></tr>`;
+            });
+        });
+
+        orderItemSelect.addEventListener('change', () => {
+            const item = inventory.find(i => i.id === parseInt(orderItemSelect.value, 10));
+            if (item) orderSupplierSelect.value = item.supplierId;
+        });
+
+        // --- FORM SUBMISSIONS ---
+        supplierForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newSupplier = {
+                name: document.getElementById('supplier-name').value,
+                contact: document.getElementById('supplier-contact').value,
+                email: document.getElementById('supplier-email').value,
+            };
+            try {
+                const addedSupplier = await apiRequest('/api/suppliers', 'POST', newSupplier);
+                suppliers.push(addedSupplier);
+                renderAll();
+                supplierForm.reset();
+            } catch (error) { console.error('Failed to add supplier:', error); }
+        });
+
+        inventoryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newItem = {
+                name: document.getElementById('item-name').value,
+                description: document.getElementById('item-description').value,
+                quantity: parseInt(document.getElementById('item-quantity').value),
+                price: parseFloat(document.getElementById('item-price').value),
+                supplierId: parseInt(document.getElementById('item-supplier-select').value),
+            };
+            try {
+                const addedItem = await apiRequest('/api/inventory', 'POST', newItem);
+                inventory.push(addedItem);
+                renderAll();
+                inventoryForm.reset();
+            } catch (error) { console.error('Failed to add item:', error); }
+        });
+
+        orderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            orderErrorDiv.textContent = '';
+            const itemId = parseInt(orderItemSelect.value);
+            const itemInStock = inventory.find(i => i.id === itemId);
+            if (!itemInStock) {
+                orderErrorDiv.textContent = 'Please select a valid item.';
+                return;
+            }
+            const orderData = {
+                orderIdString: `ORD-${Date.now()}`,
+                itemId: itemId,
+                supplierId: parseInt(orderSupplierSelect.value),
+                quantity: parseInt(document.getElementById('order-quantity').value),
+                totalCost: itemInStock.price * parseInt(document.getElementById('order-quantity').value),
+            };
+            try {
+                const response = await apiRequest('/api/orders', 'POST', orderData);
+                orders.push(response.order);
+                const itemIndex = inventory.findIndex(i => i.id === response.updatedItem.id);
+                if (itemIndex > -1) inventory[itemIndex] = response.updatedItem;
+
+                renderAll();
+                orderForm.reset();
+            } catch (error) {
+                orderErrorDiv.textContent = error.message;
+            }
+        });
+
+
+        // --- INITIALIZATION ---
+        async function initializeApp() {
+            loadingDiv.classList.remove('hidden');
+            mainContentDiv.classList.add('hidden');
+            try {
+                const state = await apiRequest('/api/state');
+                inventory = state.inventory;
+                suppliers = state.suppliers;
+                orders = state.orders;
+                renderAll();
+            } catch (error) {
+                console.error('Failed to load initial state:', error);
+                alert("Could not connect to the backend server. Please ensure it's running.");
+            } finally {
+                loadingDiv.classList.add('hidden');
+                mainContentDiv.classList.remove('hidden');
+                showPage('page-dashboard');
+                setActiveLink(document.getElementById('nav-dashboard'));
+            }
+        }
+
+        initializeApp();
+    });
+    </script>
+</body>
+</html>
